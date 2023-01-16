@@ -2,9 +2,7 @@ class MapHosts:
     def __init__(self, known_hosts, arp_hosts) -> None:
         self.knowns = []
         for i in known_hosts:
-            for k, v in i:
-                if k == 'mac':
-                    self.knowns.append(v)
+            self.knowns.append(i['mac'])
         self.arps = arp_hosts
 
     def match(self):
