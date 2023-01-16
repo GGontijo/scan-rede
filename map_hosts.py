@@ -7,7 +7,7 @@ class MapHosts:
         self.arps = arp_hosts
 
     def match(self):
-        self.matches_check = list(set(self.knowns) & set(self.arps))
+        self.matches_check = list(set(self.knowns_mac) & set(self.arps))
         self.matches_names = []
         for i in self.known_obj:
             if i['mac'] in self.matches_check:
