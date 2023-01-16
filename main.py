@@ -28,14 +28,14 @@ class ScanRede:
             if self.current_status['status'] != True:
                 self.current_status['status'] = True
                 self.shinobi.ativar()
-                self.gravar_status()
                 self.telegram.notificar("Notificações ativadas!")
         else:
             if self.current_status['status'] != False:
                 self.current_status['status'] = False
                 self.shinobi.desativar()
-                self.gravar_status()
                 self.telegram.notificar("Notificações desativadas!")
+        
+        self.gravar_status()
 
         
     def valida_horario(self) -> bool:
