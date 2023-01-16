@@ -41,7 +41,9 @@ class ScanRede:
     def scanear_rede(self):
         if platform == 'linux':
             output = subprocess.getoutput(self.config_parameters["arp_scan_command"])
-            print(output)
+            arp_hosts = output.strip()
+            print(arp_hosts)
+            print(type(arp_hosts))
 
 if __name__ == '__main__':
     ScanRede()
