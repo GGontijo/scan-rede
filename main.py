@@ -41,8 +41,6 @@ class ScanRede:
     def scanear_rede(self):
         if platform != 'linux':
             return
-        
-        os.system()
 
 if __name__ == '__main__':
     ScanRede()
