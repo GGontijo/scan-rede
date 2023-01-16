@@ -1,7 +1,9 @@
 import subprocess
+from telegram import TelegramBot
 from sys import platform
-import os
+import time
 import map_hosts
+from shinobi import Shinobi
 import json
 from config_helper import Config
 
@@ -10,14 +12,59 @@ class ScanRede:
     
     def __init__(self) -> None:
         config = Config()
+        self.telegram = TelegramBot()
+        self.shinobi = Shinobi()
         self.config_parameters = config.get_config('parameters')
         self.known_hosts = self.config_parameters['known_hosts']
-        self.config_telegram = config.get_config('telegram')
-        self.config_shinobi = config.get_config('shinobi')
         self.ler_status()
         self.scanear_rede()
+        self.change_status()
 
-    
+    def change_status(self):
+        presence = self.valida_presence()
+        horario = self.valida_horario()
+
+        if presence or horario:
+            if self.current_status['status'] != True:
+                self.current_status['status'] = True
+                self.shinobi.ativar()
+                self.gravar_status()
+                self.telegram.notificar("Notificações ativadas!")
+        else:
+            if self.current_status['status'] != False:
+                self.current_status['status'] = False
+                self.shinobi.desativar()
+                self.gravar_status()
+                self.telegram.notificar("Notificações desativadas!")
+
+        
+    def valida_horario(self) -> bool:
+        print(time.strftime("%H:%M:%S"))
+        if time.strftime("%H:%M:%S") >= self.config_parameters['time_range']['start'] and time.strftime("%H:%M:%S") <= self.config_parameters['time_range']['end']:
+            return True
+        
+        else:
+            return False
+
+
+    def valida_presence(self) -> bool:
+        if self.matches != []:
+            self.current_status['presence'] = self.matches
+            return False
+
+        else:
+            self.current_status['presence'] = self.matches
+            return True
+
+
+    def gravar_status(self):
+        json_file = json.dumps(self.current_status, indent=4)
+
+        with open('cachefile', 'w') as file:
+            file.write(json_file)
+
+            
+
     def ler_status(self):
         try:
             with open('cachefile', 'r') as file:
@@ -45,13 +92,13 @@ class ScanRede:
             output = subprocess.getoutput(self.config_parameters["arp_scan_command"])
             self.arp_hosts = output.split("\n")
             mapping = map_hosts.MapHosts(self.known_hosts,self.arp_hosts)
-            matches = mapping.match()
-            print(matches)
+            self.matches = self.mapping.match()
+            print(self.matches)
         else:
             self.arp_hosts = []
             mapping = map_hosts.MapHosts(self.known_hosts,self.arp_hosts)
-            matches = mapping.match()
-            print(matches)
+            self.matches = mapping.match()
+            print(self.matches)
             
 
 if __name__ == '__main__':
