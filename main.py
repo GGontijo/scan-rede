@@ -92,7 +92,7 @@ class ScanRede:
             output = subprocess.getoutput(self.config_parameters["arp_scan_command"])
             self.arp_hosts = output.split("\n")
             mapping = map_hosts.MapHosts(self.known_hosts,self.arp_hosts)
-            self.matches = self.mapping.match()
+            self.matches = mapping.match()
             print(self.matches)
         else:
             self.arp_hosts = []
