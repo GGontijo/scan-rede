@@ -46,12 +46,12 @@ class ScanRede:
             self.arp_hosts = output.split("\n")
             mapping = map_hosts.MapHosts(self.known_hosts,self.arp_hosts)
             matches = mapping.match()
+            print(matches)
         else:
             self.arp_hosts = []
             mapping = map_hosts.MapHosts(self.known_hosts,self.arp_hosts)
             matches = mapping.match()
-            matches_name = matches
-            print(matches_name)
+            print(matches)
             
 
 if __name__ == '__main__':
