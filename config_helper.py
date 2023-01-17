@@ -1,4 +1,5 @@
 import json
+import os
 
 class Config:
     '''Singleton approach'''
@@ -6,8 +7,8 @@ class Config:
     _instance = None
 
     def __init__(self) -> None:
-        CONFIG_FILE = 'config.json'
-        with open(CONFIG_FILE, 'r') as config:
+        CONFIG_PATH = os.path.join(os.path.expanduser('~'), 'scripts', 'scan-rede', 'config.json')
+        with open(CONFIG_PATH, 'r') as config:
             self.__config = json.load(config)
         
     def get_config(self, var: str) -> str:

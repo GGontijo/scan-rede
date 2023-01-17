@@ -1,4 +1,5 @@
 import subprocess
+import os
 from telegram import TelegramBot
 from sys import platform
 import time
@@ -11,6 +12,7 @@ from config_helper import Config
 class ScanRede:
     
     def __init__(self) -> None:
+        self.default_cachefile_path = self.path = os.path.join(os.path.expanduser('~'), 'scripts', 'scan-rede', 'cachefile')
         config = Config()
         self.telegram = TelegramBot()
         self.shinobi = Shinobi()
@@ -60,22 +62,23 @@ class ScanRede:
     def gravar_status(self):
         json_file = json.dumps(self.current_status, indent=4)
 
-        with open('cachefile', 'w') as file:
+        with open(self.default_cachefile_path, 'w') as file:
             file.write(json_file)
 
             
 
     def ler_status(self):
         try:
-            with open('cachefile', 'r') as file:
+            with open(self.default_cachefile_path, 'r') as file:
                 self.current_status = json.load(file)
         except:
             self.default_status()
-            with open('cachefile', 'r') as file:
+            with open(self.default_cachefile_path, 'r') as file:
                 self.current_status = json.load(file)
 
 
     def default_status(self):
+        
         status = {
             "presence": [],
             "status": True
@@ -83,7 +86,7 @@ class ScanRede:
 
         json_file = json.dumps(status, indent=4)
 
-        with open('cachefile', 'w') as file:
+        with open(self.default_cachefile_path, 'w') as file:
             file.write(json_file)
 
 
