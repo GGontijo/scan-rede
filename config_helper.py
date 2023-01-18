@@ -11,7 +11,7 @@ class Config:
         if platform == 'linux':
             CONFIG_PATH = os.path.join(os.path.expanduser('~'), 'scripts', 'scan-rede', 'cachefile')
         else:
-            CONFIG_PATH = 'cachefile'
+            CONFIG_PATH = 'config.json'
         with open(CONFIG_PATH, 'r') as config:
             self.__config = json.load(config)
         
