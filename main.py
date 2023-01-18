@@ -12,7 +12,10 @@ from config_helper import Config
 class ScanRede:
     
     def __init__(self) -> None:
-        self.default_cachefile_path = os.path.join(os.path.expanduser('~'), 'scripts', 'scan-rede', 'cachefile')
+        if platform == 'linux':
+            self.default_cachefile_path = os.path.join(os.path.expanduser('~'), 'scripts', 'scan-rede', 'cachefile')
+        else:
+            self.default_cachefile_path = 'cachefile'
         config = Config()
         self.telegram = TelegramBot()
         self.shinobi = Shinobi()
