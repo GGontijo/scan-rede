@@ -1,4 +1,5 @@
 import json
+from sys import platform
 import os
 
 class Config:
