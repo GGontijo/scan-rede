@@ -7,7 +7,10 @@ class Config:
     _instance = None
 
     def __init__(self) -> None:
-        CONFIG_PATH = os.path.join(os.path.expanduser('~'), 'scripts', 'scan-rede', 'config.json')
+        if platform == 'linux':
+            CONFIG_PATH = os.path.join(os.path.expanduser('~'), 'scripts', 'scan-rede', 'cachefile')
+        else:
+            CONFIG_PATH = 'cachefile'
         with open(CONFIG_PATH, 'r') as config:
             self.__config = json.load(config)
         
