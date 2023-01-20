@@ -77,6 +77,8 @@ class ScanRede:
                 self.current_status = json.load(file)
         except:
             self.default_status()
+            with open(self.default_cachefile_path, 'r') as file:
+                self.current_status = json.load(file)
 
 
     def default_status(self):
