@@ -14,9 +14,11 @@ class ScanRede:
     def __init__(self) -> None:
         if platform == 'linux':
             self.default_cachefile_path = os.path.join(os.path.expanduser('~'), 'scripts', 'scan-rede', 'cachefile')
+            self.default_log_path = os.path.join(os.path.expanduser('~'), 'scripts', 'scan-rede', 'log.txt')
             print(self.default_cachefile_path)
         else:
             self.default_cachefile_path = 'cachefile'
+            self.default_log_path = 'log.txt'
         config = Config()
         self.telegram = TelegramBot()
         self.shinobi = Shinobi()
@@ -75,7 +77,10 @@ class ScanRede:
         try:
             with open(self.default_cachefile_path, 'r') as file:
                 self.current_status = json.load(file)
-        except:
+            self.logger('ler status try')
+        except Exception as e:
+            self.logger('ler status except')
+            self.logger(e)
             self.default_status()
             with open(self.default_cachefile_path, 'r') as file:
                 self.current_status = json.load(file)
@@ -106,6 +111,10 @@ class ScanRede:
             mapping = map_hosts.MapHosts(self.known_hosts,self.arp_hosts)
             self.matches = mapping.match()
             print(self.matches)
+
+    def logger(self, message):
+        with open(self.default_log_path, 'w') as log:
+                log.writelines(message)
             
 
 if __name__ == '__main__':
