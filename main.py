@@ -77,10 +77,7 @@ class ScanRede:
         try:
             with open(self.default_cachefile_path, 'r') as file:
                 self.current_status = json.load(file)
-            self.logger('ler status try')
         except Exception as e:
-            self.logger('ler status except')
-            self.logger(e)
             self.default_status()
             with open(self.default_cachefile_path, 'r') as file:
                 self.current_status = json.load(file)
@@ -102,6 +99,7 @@ class ScanRede:
     def scanear_rede(self):
         if platform == 'linux':
             output = subprocess.getoutput(self.config_parameters["arp_scan_command"])
+            self.logger(f'output {output}')
             self.arp_hosts = output.split("\n")
             mapping = map_hosts.MapHosts(self.known_hosts,self.arp_hosts)
             self.matches = mapping.match()
