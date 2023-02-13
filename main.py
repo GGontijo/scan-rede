@@ -97,7 +97,9 @@ class ScanRede:
     def scanear_rede(self):
         if platform == 'linux':
             output = subprocess.getoutput(self.config_parameters["arp_scan_command"])
+            print(output)
             self.arp_hosts = output.split("\n")
+            print(self.arp_hosts)
             mapping = map_hosts.MapHosts(self.known_hosts,self.arp_hosts)
             self.matches = mapping.match()
             print(self.matches)
