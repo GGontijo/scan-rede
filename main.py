@@ -3,7 +3,7 @@ import os
 from telegram import TelegramBot
 from sys import platform
 import time
-import map_hosts
+from map_hosts import MapHosts
 from shinobi import Shinobi
 import json
 from config_helper import Config
@@ -24,24 +24,33 @@ class ScanRede:
         self.shinobi = Shinobi()
         self.config_parameters = config.get_config('parameters')
         self.known_hosts = self.config_parameters['known_hosts']
+        self.mapping = MapHosts(self.known_hosts)
         self.ler_status()
         self.scanear_rede()
         self.change_status()
+        
 
     def change_status(self):
         presence = self.valida_presence()
         horario = self.valida_horario()
+        event_person = []
 
         if presence or horario:
             if self.current_status['status'] != True:
                 self.current_status['status'] = True
+                for k in self.map:
+                    if self.map[k]["action"] == "Saiu":
+                        event_person.append(k)
                 self.shinobi.ativar()
-                self.telegram.notificar("Notificações ativadas!")
+                self.telegram.notificar(f"Notificações ativadas, {' '.join(map(str, event_person))} Saiu!")
         else:
             if self.current_status['status'] != False:
                 self.current_status['status'] = False
+                for k in self.map:
+                    if self.map[k]["action"] == "Entrou":
+                        event_person.append(k)
                 self.shinobi.desativar()
-                self.telegram.notificar("Notificações desativadas!")
+                self.telegram.notificar(f"Notificações desativadas, {' '.join(map(str, event_person))} Entrou!")
         
         self.gravar_status()
 
@@ -50,19 +59,22 @@ class ScanRede:
         print(time.strftime("%H:%M:%S"))
         if time.strftime("%H:%M:%S") >= self.config_parameters['time_range']['start'] and time.strftime("%H:%M:%S") <= self.config_parameters['time_range']['end']:
             return True
-        
         else:
             return False
 
 
     def valida_presence(self) -> bool:
-        if self.matches != []:
-            self.current_status['presence'] = self.matches
-            return False
-
-        else:
-            self.current_status['presence'] = self.matches
-            return True
+        self.current_presence_list = []
+        if self.map != []:
+            for k in self.map:
+                if self.map[k]["action"] != "Saiu":
+                    self.current_presence_list.append(k)
+            if self.current_presence_list != []:
+                self.current_status['presence'] = self.current_presence_list
+                return False
+            else: 
+                self.current_status['presence'] = self.current_presence_list
+                return True
 
 
     def gravar_status(self):
@@ -102,14 +114,12 @@ class ScanRede:
             print(output)
             self.arp_hosts = output.split("\n")
             print(self.arp_hosts)
-            mapping = map_hosts.MapHosts(self.known_hosts,self.arp_hosts)
-            self.matches = mapping.match()
-            print(self.matches)
+            self.map = self.mapping.match(self.arp_hosts, self.current_status['presence'])
+            print(self.map)
         else:
             self.arp_hosts = []
-            mapping = map_hosts.MapHosts(self.known_hosts,self.arp_hosts)
-            self.matches = mapping.match()
-            print(self.matches)
+            self.map = self.mapping.match(self.arp_hosts, self.current_status['presence'])
+            print(self.map)
 
     def logger(self, message):
         with open(self.default_log_path, 'w') as log:
