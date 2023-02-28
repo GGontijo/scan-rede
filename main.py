@@ -42,6 +42,9 @@ class ScanRede:
                     if self.map[k]["action"] == "Saiu":
                         event_person.append(k)
                 self.shinobi.ativar()
+                if event_person != None:
+                    self.telegram.notificar(f"Notificações ativadas!")
+                    return None
                 self.telegram.notificar(f"Notificações ativadas, {' '.join(map(str, event_person))} Saiu!")
         else:
             if self.current_status['status'] != False:
@@ -50,6 +53,9 @@ class ScanRede:
                     if self.map[k]["action"] == "Entrou":
                         event_person.append(k)
                 self.shinobi.desativar()
+                if event_person != None:
+                    self.telegram.notificar(f"Notificações desativadas!")
+                    return None
                 self.telegram.notificar(f"Notificações desativadas, {' '.join(map(str, event_person))} Entrou!")
         
         self.gravar_status()
@@ -117,7 +123,7 @@ class ScanRede:
             self.map = self.mapping.match(self.arp_hosts, self.current_status['presence'])
             print(self.map)
         else:
-            self.arp_hosts = []
+            self.arp_hosts = ["0c:cb:85:36:c6:39"]
             self.map = self.mapping.match(self.arp_hosts, self.current_status['presence'])
             print(self.map)
 
