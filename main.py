@@ -7,6 +7,7 @@ from map_hosts import MapHosts
 from shinobi import Shinobi
 import json
 from config_helper import Config
+from datetime import datetime
 
 
 class ScanRede:
@@ -131,7 +132,7 @@ class ScanRede:
 
     def logger(self, message):
         with open(self.default_log_path, 'w') as log:
-                log.writelines(str(message))
+                log.writelines(f"{datetime.now}: {str(message)}\n")
             
 
 if __name__ == '__main__':
