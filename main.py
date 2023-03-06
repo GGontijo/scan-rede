@@ -64,7 +64,7 @@ class ScanRede:
 
         
     def valida_horario(self) -> bool:
-        print(time.strftime("%H:%M:%S"))
+        self.logger(time.strftime("%H:%M:%S"))
         if time.strftime("%H:%M:%S") >= self.config_parameters['time_range']['start'] and time.strftime("%H:%M:%S") <= self.config_parameters['time_range']['end']:
             return True
         else:
@@ -120,18 +120,19 @@ class ScanRede:
     def scanear_rede(self):
         if platform == 'linux':
             output = subprocess.getoutput(self.config_parameters["arp_scan_command"])
-            print(output)
+            self.logger(output)
             self.arp_hosts = output.split("\n")
-            print(self.arp_hosts)
+            self.logger(self.arp_hosts)
             self.map = self.mapping.match(self.arp_hosts, self.current_status['presence'])
-            print(self.map)
+            self.logger(self.map)
         else:
             self.arp_hosts = ["0c:cb:85:36:c6:39"]
             self.map = self.mapping.match(self.arp_hosts, self.current_status['presence'])
-            print(self.map)
+            self.logger(self.map)
 
     def logger(self, message):
-        with open(self.default_log_path, 'w') as log:
+        print(message)
+        with open(self.default_log_path, 'a') as log:
                 log.writelines(f"{datetime.now()}: {str(message)}\n")
             
 
