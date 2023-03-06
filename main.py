@@ -15,7 +15,8 @@ class ScanRede:
         if platform == 'linux':
             self.default_cachefile_path = os.path.join(os.path.expanduser('~'), 'scripts', 'scan-rede', 'cachefile')
             self.default_log_path = os.path.join(os.path.expanduser('~'), 'scripts', 'scan-rede', 'log.txt')
-            print(self.default_cachefile_path)
+            self.logger(self.default_cachefile_path)
+            self.logger(self.default_log_path)
         else:
             self.default_cachefile_path = 'cachefile'
             self.default_log_path = 'log.txt'
@@ -96,13 +97,14 @@ class ScanRede:
             with open(self.default_cachefile_path, 'r') as file:
                 self.current_status = json.load(file)
         except Exception as e:
+            self.logger(e)
             self.default_status()
             with open(self.default_cachefile_path, 'r') as file:
                 self.current_status = json.load(file)
 
 
     def default_status(self):
-        
+        self.logger("cachefile não encontrado! gerando um a partir do modelo...")
         status = {
             "presence": [],
             "status": True
