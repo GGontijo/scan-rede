@@ -130,9 +130,8 @@ class ScanRede:
             print(self.map)
 
     def logger(self, message):
-        print(self.default_log_path)
         with open(self.default_log_path, 'w') as log:
-                log.writelines(message)
+                log.writelines(str(message))
             
 
 if __name__ == '__main__':
