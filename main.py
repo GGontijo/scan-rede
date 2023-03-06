@@ -132,7 +132,7 @@ class ScanRede:
 
     def logger(self, message):
         with open(self.default_log_path, 'w') as log:
-                log.writelines(f"{datetime.now}: {str(message)}\n")
+                log.writelines(f"{datetime.now()}: {str(message)}\n")
             
 
 if __name__ == '__main__':
