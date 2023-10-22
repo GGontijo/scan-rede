@@ -31,6 +31,7 @@ class ScanRede:
         self.ler_status()
         self.scanear_rede()
         self.change_status()
+        self.monitorar_dispositivo()
         
 
     def change_status(self):
