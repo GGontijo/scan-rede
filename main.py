@@ -132,6 +132,9 @@ class ScanRede:
             if v not in self.arp_hosts and not self.host_inoperante:
                 self.telegram.notificar(f'Dispositivo {k} não foi encontrado na rede!')
                 self.host_inoperante = True # Evita notificar a cada intervalo
+            if v in self.arp_hosts and self.host_inoperante:
+                self.telegram.notificar(f'Dispositivo {k} encontrado novamente!')
+                self.host_inoperante = False # Evita notificar a cada intervalo
             else:
                 self.host_inoperante = False # Reinicia estado
 
