@@ -14,8 +14,8 @@ class ScanRede:
     
     def __init__(self) -> None:
         if platform == 'linux':
-            self.default_cachefile_path = os.path.join(os.path.expanduser('~'), 'scripts', 'scan-rede', 'cachefile')
-            self.default_log_path = os.path.join(os.path.expanduser('~'), 'scripts', 'scan-rede', 'log.txt')
+            self.default_cachefile_path = os.path.join(os.path.expanduser('~'), 'scan-rede', 'cachefile')
+            self.default_log_path = os.path.join(os.path.expanduser('~'), 'scan-rede', 'log.txt')
             self.logger(self.default_cachefile_path)
             self.logger(self.default_log_path)
         else:

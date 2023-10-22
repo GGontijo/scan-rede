@@ -9,7 +9,7 @@ class Config:
 
     def __init__(self) -> None:
         if platform == 'linux':
-            CONFIG_PATH = os.path.join(os.path.expanduser('~'), 'scripts', 'scan-rede', 'config.json')
+            CONFIG_PATH = os.path.join(os.path.expanduser('~'), 'scan-rede', 'config.json')
         else:
             CONFIG_PATH = 'config.json'
         with open(CONFIG_PATH, 'r') as config:
