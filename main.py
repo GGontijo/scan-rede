@@ -24,8 +24,10 @@ class ScanRede:
         config = Config()
         self.telegram = TelegramBot()
         self.shinobi = Shinobi()
+        self.host_inoperante = False
         self.config_parameters = config.get_config('parameters')
         self.known_hosts = self.config_parameters['known_hosts']
+        self.watch_dog_hosts = self.config_parameters['watch_dog_hosts']
         self.mapping = MapHosts(self.known_hosts)
         self.ler_status()
         self.scanear_rede()
@@ -44,9 +46,6 @@ class ScanRede:
                     if self.map[k]["action"] == "Saiu":
                         event_person.append(k)
                 self.shinobi.ativar()
-                #if event_person != None:
-                #    self.telegram.notificar(f"Notificações ativadas!")
-                #    return None
                 self.telegram.notificar(f"Notificações ativadas, {' '.join(map(str, event_person))} Saiu!")
         else:
             if self.current_status['status'] != False:
@@ -55,9 +54,6 @@ class ScanRede:
                     if self.map[k]["action"] == "Entrou":
                         event_person.append(k)
                 self.shinobi.desativar()
-                #if event_person != None:
-                #    self.telegram.notificar(f"Notificações desativadas!")
-                #    return None
                 self.telegram.notificar(f"Notificações desativadas, {' '.join(map(str, event_person))} Entrou!")
         
         self.gravar_status()
@@ -129,11 +125,20 @@ class ScanRede:
             self.arp_hosts = ["0c:cb:85:36:c6:39"]
             self.map = self.mapping.match(self.arp_hosts, self.current_status['presence'])
             self.logger(self.map)
+    
+    def monitorar_dispositivo(self):
+        '''Monitora dispositivo na rede, está feito para apenas um dispositivo, ajustar antes de usar com mais'''
+        for k, v in self.watch_dog_hosts:
+            if v not in self.arp_hosts and not self.host_inoperante:
+                self.telegram.notificar(f'Dispositivo {k} não foi encontrado na rede!')
+                self.host_inoperante = True # Evita notificar a cada intervalo
+            else:
+                self.host_inoperante = False # Reinicia estado
 
     def logger(self, message):
         print(message)
         with open(self.default_log_path, 'a') as log:
-                log.writelines(f"{datetime.now()}: {str(message)}\n")
+            log.writelines(f"{datetime.now()}: {str(message)}\n")
             
 
 if __name__ == '__main__':
