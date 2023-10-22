@@ -30,8 +30,8 @@ class ScanRede:
         self.mapping = MapHosts(self.known_hosts)
         self.ler_status()
         self.scanear_rede()
-        #self.change_status()
         self.monitorar_dispositivo()
+        self.change_status()
         
 
     def change_status(self):
