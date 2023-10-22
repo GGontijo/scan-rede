@@ -30,7 +30,7 @@ class ScanRede:
         self.mapping = MapHosts(self.known_hosts)
         self.ler_status()
         self.scanear_rede()
-        self.change_status()
+        #self.change_status()
         self.monitorar_dispositivo()
         
 
@@ -129,15 +129,17 @@ class ScanRede:
     
     def monitorar_dispositivo(self):
         '''Monitora dispositivo na rede, está feito para apenas um dispositivo, ajustar antes de usar com mais'''
-        for k, v in self.watch_dog_hosts:
-            if v not in self.arp_hosts and not self.current_status['host_inoperante']:
-                self.telegram.notificar(f'Dispositivo {k} não foi encontrado na rede!')
-                self.current_status['host_inoperante'] = True # Evita notificar a cada intervalo
-            if v in self.arp_hosts and self.current_status['host_inoperante']:
-                self.telegram.notificar(f'Dispositivo {k} encontrado novamente!')
-                self.current_status['host_inoperante'] = False # Evita notificar a cada intervalo
-            else:
-                self.current_status['host_inoperante'] = False # Reinicia estado
+
+        for host in self.watch_dog_hosts:
+            for k, v in host.items():
+                if v not in self.arp_hosts and not self.current_status['host_inoperante']:
+                    self.telegram.notificar(f'Dispositivo {k} não foi encontrado na rede!')
+                    self.current_status['host_inoperante'] = True # Evita notificar a cada intervalo
+                if v in self.arp_hosts and self.current_status['host_inoperante']:
+                    self.telegram.notificar(f'Dispositivo {k} encontrado novamente!')
+                    self.current_status['host_inoperante'] = False # Evita notificar a cada intervalo
+                else:
+                    self.current_status['host_inoperante'] = False # Reinicia estado
 
     def logger(self, message):
         print(message)
