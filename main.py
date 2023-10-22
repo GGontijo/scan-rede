@@ -138,8 +138,6 @@ class ScanRede:
                 if v in self.arp_hosts and self.current_status['host_inoperante']:
                     self.telegram.notificar(f'Dispositivo {k} encontrado novamente!')
                     self.current_status['host_inoperante'] = False # Evita notificar a cada intervalo
-                else:
-                    self.current_status['host_inoperante'] = False # Reinicia estado
 
     def logger(self, message):
         print(message)
