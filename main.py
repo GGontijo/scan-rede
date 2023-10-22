@@ -24,7 +24,6 @@ class ScanRede:
         config = Config()
         self.telegram = TelegramBot()
         self.shinobi = Shinobi()
-        self.host_inoperante = False
         self.config_parameters = config.get_config('parameters')
         self.known_hosts = self.config_parameters['known_hosts']
         self.watch_dog_hosts = self.config_parameters['watch_dog_hosts']
@@ -104,7 +103,8 @@ class ScanRede:
         self.logger("cachefile não encontrado! gerando um a partir do modelo...")
         status = {
             "presence": [],
-            "status": True
+            "status": True,
+            "host_inoperante": False
         }
 
         json_file = json.dumps(status, indent=4)
@@ -129,14 +129,14 @@ class ScanRede:
     def monitorar_dispositivo(self):
         '''Monitora dispositivo na rede, está feito para apenas um dispositivo, ajustar antes de usar com mais'''
         for k, v in self.watch_dog_hosts:
-            if v not in self.arp_hosts and not self.host_inoperante:
+            if v not in self.arp_hosts and not self.current_status['host_inoperante']:
                 self.telegram.notificar(f'Dispositivo {k} não foi encontrado na rede!')
-                self.host_inoperante = True # Evita notificar a cada intervalo
-            if v in self.arp_hosts and self.host_inoperante:
+                self.current_status['host_inoperante'] = True # Evita notificar a cada intervalo
+            if v in self.arp_hosts and self.current_status['host_inoperante']:
                 self.telegram.notificar(f'Dispositivo {k} encontrado novamente!')
-                self.host_inoperante = False # Evita notificar a cada intervalo
+                self.current_status['host_inoperante'] = False # Evita notificar a cada intervalo
             else:
-                self.host_inoperante = False # Reinicia estado
+                self.current_status['host_inoperante'] = False # Reinicia estado
 
     def logger(self, message):
         print(message)
