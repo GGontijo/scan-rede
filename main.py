@@ -27,6 +27,8 @@ class ScanRede:
         self.config_parameters = config.get_config('parameters')
         self.known_hosts = self.config_parameters['known_hosts']
         self.watch_dog_hosts = self.config_parameters['watch_dog_hosts']
+        self.ping_command = self.config_parameters['ping_command']
+        self.reboot_cameras = self.config_parameters['reboot_cameras']
         self.mapping = MapHosts(self.known_hosts)
         self.ler_status()
         self.scanear_rede()
@@ -127,15 +129,28 @@ class ScanRede:
             self.map = self.mapping.match(self.arp_hosts, self.current_status['presence'])
             self.logger(self.map)
     
-    def monitorar_dispositivo(self):
-        '''Monitora dispositivo na rede, está feito para apenas um dispositivo, ajustar antes de usar com mais'''
+    def dispositivo_online(self, ip):
+        packet_received = subprocess.getoutput(self.ping_command.format(ip_address=ip))
+        if int(packet_received) == 0:
+            return False
+        else:
+            return True
 
+    def monitorar_dispositivo(self):
+        '''Monitora dispositivo na rede e toma uma ação caso o dispositivo não seja encontrado.'''
         for host in self.watch_dog_hosts:
             for k, v in host.items():
-                if v not in self.arp_hosts and not self.current_status['host_inoperante']:
+                if not self.current_status['host_inoperante'] and not self.dispositivo_online(v):
                     self.telegram.notificar(f'Dispositivo {k} não foi encontrado na rede!')
+                    self.telegram.notificar(f'Tentando reinicia-lo...')
+                    subprocess.getoutput(self.reboot_cameras)
+                    time.sleep(30)
+                    if self.dispositivo_online(v):
+                        self.telegram.notificar(f'Dispositivo {k} foi encontrado novamente!')
+                        continue
+                    self.telegram.notificar(f'Dispositivo {k} continua inoperante!')
                     self.current_status['host_inoperante'] = True # Evita notificar a cada intervalo
-                if v in self.arp_hosts and self.current_status['host_inoperante']:
+                if self.dispositivo_online(v) and self.current_status['host_inoperante']:
                     self.telegram.notificar(f'Dispositivo {k} encontrado novamente!')
                     self.current_status['host_inoperante'] = False # Evita notificar a cada intervalo
 
