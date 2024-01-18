@@ -144,7 +144,7 @@ class ScanRede:
                     self.telegram.notificar(f'Dispositivo {k} não foi encontrado na rede!')
                     self.telegram.notificar(f'Tentando reinicia-lo...')
                     subprocess.getoutput(self.reboot_cameras)
-                    time.sleep(90)
+                    time.sleep(120)
                     if self.dispositivo_online(v):
                         self.telegram.notificar(f'Dispositivo {k} foi encontrado novamente!')
                         continue
